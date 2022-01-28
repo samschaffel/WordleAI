@@ -5,82 +5,34 @@ import numpy as np
 import pygame
 import pygame.font
 
+#initialize random word
+wordfile = open("wordle-answers-alphabetical.txt", "r")
+words = wordfile.read()
+words = words.split('\n')
+random_word = words[random.randint(0, len(words))]
+print(random_word)
+
+#initialize game
 pygame.init()
 # Set up the drawing window
 screenWidth = 700
 screenHeight = 1000
-screen = pygame.display.set_mode([screenWidth, screenHeight])
 
-COLOR_INACTIVE = pygame.Color('lightskyblue3')
-COLOR_ACTIVE = pygame.Color('dodgerblue2')
-FONT = pygame.font.Font(None, 32)
-
-
-class InputBox:
-
-    def __init__(self, x, y, w, h, text=''):
-        self.rect = pygame.Rect(x, y, w, h)
-        self.color = COLOR_INACTIVE
-        self.text = text
-        self.txt_surface = FONT.render(text, True, self.color)
-        self.active = False
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            # If the user clicked on the input_box rect.
-            if self.rect.collidepoint(event.pos):
-                # Toggle the active variable.
-                self.active = not self.active
-            else:
-                self.active = False
-            # Change the current color of the input box.
-            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
-        if event.type == pygame.KEYDOWN:
-            if self.active:
-                if event.key == pygame.K_RETURN:
-                    print(self.text)
-                    self.text = ''
-                elif event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                else:
-                    self.text += event.unicode
-                # Re-render the text.
-
-                self.txt_surface = FONT.render(self.text, True, self.color)
-
-    def update(self):
-        # Resize the box if the text is too long.
-        width = max(500, self.txt_surface.get_width()+10)
-        self.rect.w = width
-
-    def draw(self, screen):
-        # Blit the text.
-        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
-        # Blit the rect.
-        pygame.draw.rect(screen, self.color, self.rect, 2)
-
-
-
-
-wordfile = open("wordle-answers-alphabetical.txt", "r")
-words = wordfile.read()
-words = words.split('\n')
-
-random_word = words[random.randint(0, len(words))]
-print(random_word)
-
-
-
-# Run until the user asks to quit
-
+#start game
 def main():
-    clock = pygame.time.Clock()
-    input_box = InputBox(100, 800, 600, 75)
+    screen = pygame.display.set_mode([screenWidth, screenHeight])
     # Fill the background with black
     screen.fill((0, 0, 0))
-
+    clock = pygame.time.Clock()
+    COLOR_INACTIVE = pygame.Color('lightskyblue3')
+    COLOR_ACTIVE = pygame.Color('dodgerblue2')
     titleFont = pygame.font.Font(None, 100)
     guessFont = pygame.font.Font(None, 75)
+    input_box = pygame.Rect(100, 800, 600, 75)
+    COLOR = COLOR_INACTIVE
+    active = False
+    text = ''
+
     wordletxt = titleFont.render("Wordle", True, (255,255,255))
     screen.blit(wordletxt, (100,20))
     for x in np.arange(100, 600, 100):
@@ -89,6 +41,7 @@ def main():
 
     pygame.display.flip()
     running = True
+    # Run until the user asks to quit
     while running:
 
         # Did the user click the window close button?
@@ -96,21 +49,41 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            input_box.handle_event(event)
 
-        input_box.update()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # If the user clicked on the input_box rect.
+                if input_box.collidepoint(event.pos):
+                    # Toggle the active variable.
+                    active = not active
+                else:
+                    active = False
+                # Change the current COLOR of the input box.
+                COLOR = COLOR_ACTIVE if active else COLOR_INACTIVE
+            if event.type == pygame.KEYDOWN:
+                if active:
+                    if event.key == pygame.K_RETURN:
+                        print(text)
+                        text = ''
+
+                    elif event.key == pygame.K_BACKSPACE:
+                        text = text[:-1]
+                    else:
+                        text += event.unicode
+                    # Re-render the text.
         pygame.draw.rect(screen, (128, 128, 128), (100, 800, 500, 75))
-        input_box.draw(screen)
+         # Render the current text.
+        txt_surface = guessFont.render(text, True, COLOR)
+        # Resize the box if the text is too long.
+        width = max(500, txt_surface.get_width()+10)
+        input_box.w = width
+        # Blit the text.
+        screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
+        # Blit the input_box rect.
+        pygame.draw.rect(screen, COLOR, input_box, 2)
 
         pygame.display.flip()
-
-
-
         clock.tick(30)
 
-
-        # Flip the display
-        #pygame.display.flip()
 
 # Done! Time to quit.
 if __name__ == '__main__':
@@ -120,7 +93,7 @@ if __name__ == '__main__':
 
 for n in range(6):
     while(True):
-        message = "Guess word " + str(n+1) + ":"
+        message = "Guess word #" + str(n+1) + ":"
         user_guess = input(message)
         print("Your guess is: " + user_guess)
         if user_guess not in words:

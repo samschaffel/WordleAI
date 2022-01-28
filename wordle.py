@@ -10,13 +10,14 @@ wordfile = open("wordle-answers-alphabetical.txt", "r")
 words = wordfile.read()
 words = words.split('\n')
 random_word = words[random.randint(0, len(words))]
-#print(random_word)
+print(random_word)
 
 #initialize game
 pygame.init()
 # Set up the drawing window
 screenWidth = 700
 screenHeight = 1000
+
 titleFont = pygame.font.Font(None, 100)
 guessFont = pygame.font.Font(None, 75)
 smallFont = pygame.font.Font(None, 32)
@@ -28,10 +29,12 @@ WHITE = (255,255,255)
 BACKGROUND = (18, 18, 19)
 COLOR_INACTIVE = DARK_GRAY
 COLOR_ACTIVE = LIGHT_GRAY
+
 BOX_SIZE = 75
 INPUT_WIDTH = 500
 
 class letter_box:
+
     def __init__(self, 
                 screen, 
                 x, 
@@ -40,6 +43,7 @@ class letter_box:
                 row, 
                 letter=None, 
                 color=DARK_GRAY):
+
         self.screen = screen
         self.x = x
         self.y = y
@@ -49,8 +53,8 @@ class letter_box:
         self.rect = self.draw(color)
 
     def draw(self, color):
-        return pygame.draw.rect(self.screen, 
-                                color, 
+        return pygame.draw.rect(self.screen,
+                                color,
                                 (self.x, self.y, BOX_SIZE, BOX_SIZE))
 
     def write(self, letter):
@@ -62,13 +66,16 @@ class letter_box:
         
 
 
+
 #start game
 def main():
     screen = pygame.display.set_mode([screenWidth, screenHeight])
     # Fill the background with black
     screen.fill(BACKGROUND)
     clock = pygame.time.Clock()
+
     input_box = pygame.Rect((screenWidth - INPUT_WIDTH) // 2, 800, INPUT_WIDTH, 75)
+
     COLOR = COLOR_INACTIVE
     active = False
     text = ''
@@ -115,15 +122,24 @@ def main():
                             #draw over error text
                             pygame.draw.rect(screen, BACKGROUND, (100, 900, 500, 40))
 
+
                             for i in range(len(user_guess)):
+
                                 guess = user_guess[i]
                                 box = boxes[n][i]
                                 if guess in random_word:
-                                    box.draw(YELLOW)
-                                if guess == random_word[i]:
-                                    box.draw(GREEN)
+                                    correctlettercount = 0
+                                    for k in range(i,5):
+                                        if guess[i] == user_guess[k] and user_guess[k] == random_word[k]:
+                                            correctlettercount += 1
+                                            boxes[n][k].draw(GREEN)
+                                    if user_guess[0:i+1].count(guess) + correctlettercount <= random_word.count(user_guess[i]):
+                                        print("ROW", n)
+                                        boxes[n][i].draw(YELLOW)
+                                        print(n, i, boxes[n][i].x, boxes[n][i].y)
                                 box.write(guess)
                             n += 1
+
                         text = ''
 
                     elif event.key == pygame.K_BACKSPACE:

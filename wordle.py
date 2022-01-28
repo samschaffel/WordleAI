@@ -11,8 +11,7 @@ words = wordfile.read()
 words = words.split('\n')
 random_word = words[random.randint(0, len(words))]
 print(random_word)
-for i in range(5):
-    print(random_word[0:i+1].count(random_word[i]))
+
 #initialize game
 pygame.init()
 # Set up the drawing window
@@ -105,16 +104,12 @@ def main():
 
 
                             for i in range(len(user_guess)):
-                                #if user_guess[i] == random_word[i]:
-                                #    boxes[n][i].draw(GREEN)
-
                                 if user_guess[i] in random_word:
                                     correctlettercount = 0
                                     for k in range(i,5):
                                         if user_guess[i] == user_guess[k] and user_guess[k] == random_word[k]:
                                             correctlettercount += 1
                                             boxes[n][k].draw(GREEN)
-                                            print(correctlettercount)
                                     if user_guess[0:i+1].count(user_guess[i]) + correctlettercount <= random_word.count(user_guess[i]):
                                         print("ROW", n)
                                         boxes[n][i].draw(YELLOW)

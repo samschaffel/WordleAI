@@ -28,15 +28,18 @@ def main():
     COLOR_ACTIVE = pygame.Color('dodgerblue2')
     titleFont = pygame.font.Font(None, 100)
     guessFont = pygame.font.Font(None, 75)
+    smallFont = pygame.font.Font(None, 32)
     input_box = pygame.Rect(100, 800, 600, 75)
     COLOR = COLOR_INACTIVE
     active = False
     text = ''
+    n = 0
 
     wordletxt = titleFont.render("Wordle", True, (255,255,255))
+    wordError = smallFont.render("Please guess a valid 5-letter word", True, (255,255,255))
     screen.blit(wordletxt, (100,20))
     for x in np.arange(100, 600, 100):
-        for y in np.arange(100, 600, 100):
+        for y in np.arange(100, 700, 100):
             pygame.draw.rect(screen, (64, 64, 64), (x, y, 75, 75))
 
     pygame.display.flip()
@@ -62,7 +65,15 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        print(text)
+                        user_guess = text
+                        if user_guess not in words:
+                            screen.blit(wordError, (100,900))
+                        else:
+                            pygame.draw.rect(screen, (0,0,0), (100, 900, 500, 40))
+                            for i in range(len(user_guess)):
+                                lettertxt = guessFont.render(user_guess[i], True, (255,255,255))
+                                screen.blit(lettertxt,(20 + 100*(i+1), 15 + 100*(n+1)))
+                            n = n + 1
                         text = ''
 
                     elif event.key == pygame.K_BACKSPACE:
@@ -70,8 +81,9 @@ def main():
                     else:
                         text += event.unicode
                     # Re-render the text.
+
+        # Render the current text.
         pygame.draw.rect(screen, (128, 128, 128), (100, 800, 500, 75))
-         # Render the current text.
         txt_surface = guessFont.render(text, True, COLOR)
         # Resize the box if the text is too long.
         width = max(500, txt_surface.get_width()+10)
@@ -79,7 +91,11 @@ def main():
         # Blit the text.
         screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
         # Blit the input_box rect.
-        pygame.draw.rect(screen, COLOR, input_box, 2)
+        #pygame.draw.rect(screen, COLOR, input_box, 2)
+        #text above guessbox
+        guesstxt = smallFont.render("Guess word #" + str(n+1) + ":", True, (255,255,255))
+        pygame.draw.rect(screen, (0,0,0), (100, 750, 500, 40))
+        screen.blit(guesstxt, (100,750))
 
         pygame.display.flip()
         clock.tick(30)

@@ -10,7 +10,7 @@ wordfile = open("wordle-answers-alphabetical.txt", "r")
 words = wordfile.read()
 words = words.split('\n')
 random_word = words[random.randint(0, len(words))]
-print(random_word)
+#print(random_word)
 
 #initialize game
 pygame.init()
@@ -67,10 +67,18 @@ def main():
                     if event.key == pygame.K_RETURN:
                         user_guess = text
                         if user_guess not in words:
+                            #draw error text
                             screen.blit(wordError, (100,900))
                         else:
+                            #draw over error text
                             pygame.draw.rect(screen, (0,0,0), (100, 900, 500, 40))
+
+
                             for i in range(len(user_guess)):
+                                if user_guess[i] in random_word:
+                                    pygame.draw.rect(screen, (255,255,0), (100*(i+1), 100*(n+1), 75, 75))
+                                if user_guess[i] == random_word[i]:
+                                    pygame.draw.rect(screen, (0,255,0), (100*(i+1), 100*(n+1), 75, 75))
                                 lettertxt = guessFont.render(user_guess[i], True, (255,255,255))
                                 screen.blit(lettertxt,(20 + 100*(i+1), 15 + 100*(n+1)))
                             n = n + 1

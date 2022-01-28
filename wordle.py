@@ -130,13 +130,11 @@ def main():
                                 if guess in random_word:
                                     correctlettercount = 0
                                     for k in range(i,5):
-                                        if guess[i] == user_guess[k] and user_guess[k] == random_word[k]:
+                                        if guess == user_guess[k] and user_guess[k] == random_word[k]:
                                             correctlettercount += 1
                                             boxes[n][k].draw(GREEN)
                                     if user_guess[0:i+1].count(guess) + correctlettercount <= random_word.count(user_guess[i]):
-                                        print("ROW", n)
                                         boxes[n][i].draw(YELLOW)
-                                        print(n, i, boxes[n][i].x, boxes[n][i].y)
                                 box.write(guess)
                             n += 1
 

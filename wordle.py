@@ -14,24 +14,34 @@ print(random_word)
 
 #initialize game
 pygame.init()
-# Set up the drawing window
 screenWidth = 700
 screenHeight = 1000
-COLOR_INACTIVE = pygame.Color('lightskyblue3')
-COLOR_ACTIVE = pygame.Color('dodgerblue2')
-YELLOW = (255, 255, 0)
-GREEN = (0,255,0)
+
+titleFont = pygame.font.Font(None, 100)
+guessFont = pygame.font.Font(None, 75)
+smallFont = pygame.font.Font(None, 32)
+YELLOW = (181, 159, 59)
+GREEN = (83, 141, 78)
+DARK_GRAY = (58, 58, 60)
+LIGHT_GRAY = (129, 131, 132)
+WHITE = (255,255,255)
+BACKGROUND = (18, 18, 19)
+COLOR_INACTIVE = DARK_GRAY
+COLOR_ACTIVE = LIGHT_GRAY
+
 BOX_SIZE = 75
+INPUT_WIDTH = 500
 
 class letter_box:
-    def __init__(self,
-                screen,
-                x,
-                y,
-                col,
-                row,
-                letter=None,
-                color=COLOR_INACTIVE):
+    def __init__(self, 
+                screen, 
+                x, 
+                y, 
+                col, 
+                row, 
+                letter=None, 
+                color=DARK_GRAY):
+
         self.screen = screen
         self.x = x
         self.y = y
@@ -45,17 +55,21 @@ class letter_box:
                                 color,
                                 (self.x, self.y, BOX_SIZE, BOX_SIZE))
 
+    def write(self, letter):
+        self.letter = letter.upper()
+        lettertxt = guessFont.render(self.letter, True, WHITE)
+        text_rect = lettertxt.get_rect()
+        self.screen.blit(lettertxt, 
+                        (self.x + (BOX_SIZE - text_rect.width) // 2, 15 + self.y))
+        
 
 #start game
 def main():
     screen = pygame.display.set_mode([screenWidth, screenHeight])
     # Fill the background with black
-    screen.fill((0, 0, 0))
+    screen.fill(BACKGROUND)
     clock = pygame.time.Clock()
-    titleFont = pygame.font.Font(None, 100)
-    guessFont = pygame.font.Font(None, 75)
-    smallFont = pygame.font.Font(None, 32)
-    input_box = pygame.Rect(100, 800, 600, 75)
+    input_box = pygame.Rect((screenWidth - INPUT_WIDTH) // 2, 800, INPUT_WIDTH, 75)
     COLOR = COLOR_INACTIVE
     active = False
     text = ''
@@ -70,18 +84,14 @@ def main():
     for x in range(5):
         for y in range(6):
             boxes[y][x] = letter_box(screen, x_pos[x], y_pos[y], x, y)
-
     pygame.display.flip()
     running = True
     # Run until the user asks to quit
     while running:
-
         # Did the user click the window close button?
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # If the user clicked on the input_box rect.
                 if input_box.collidepoint(event.pos):
@@ -94,54 +104,48 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if active:
                     if event.key == pygame.K_RETURN:
-                        user_guess = text
+                        user_guess = text.lower()
                         if user_guess not in words:
                             #draw error text
                             screen.blit(wordError, (100,900))
                         else:
                             #draw over error text
-                            pygame.draw.rect(screen, (0,0,0), (100, 900, 500, 40))
-
-
+                            pygame.draw.rect(screen, BACKGROUND, (100, 900, 500, 40))
                             for i in range(len(user_guess)):
-                                if user_guess[i] in random_word:
+                                guess = user_guess[i]
+                                box = boxes[n][i]
+                                if guess in random_word:
                                     correctlettercount = 0
                                     for k in range(i,5):
-
                                         if guess == user_guess[k] and user_guess[k] == random_word[k]:
                                             correctlettercount += 1
-                                            boxes[n][k].draw(GREEN)
+                                            box.draw(GREEN)
                                     if user_guess[0:i+1].count(guess) + correctlettercount <= random_word.count(user_guess[i]):
-                                        boxes[n][i].draw(YELLOW)
+                                        box.draw(YELLOW)
                                 box.write(guess)
                             n += 1
-
-                                lettertxt = guessFont.render(user_guess[i], True, (255,255,255))
-                                screen.blit(lettertxt,(20 + 100*(i+1), 15 + 100*(n+1)))
-                            n = n + 1
                         text = ''
-
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                     else:
-                        text += event.unicode
+                        if len(text) < 5:
+                            text += event.unicode
                     # Re-render the text.
 
         # Render the current text.
-        pygame.draw.rect(screen, (128, 128, 128), (100, 800, 500, 75))
-        txt_surface = guessFont.render(text, True, COLOR)
-        # Resize the box if the text is too long.
-        width = max(500, txt_surface.get_width()+10)
-        input_box.w = width
-        # Blit the text.
-        screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
-        # Blit the input_box rect.
-        #pygame.draw.rect(screen, COLOR, input_box, 2)
+        pygame.draw.rect(screen, 
+                        COLOR, 
+                        input_box)
+        txt_surface = guessFont.render(text.upper(), True, WHITE)
+        text_rect = txt_surface.get_rect()
+        # Blit the text
+        screen.blit(txt_surface, 
+                    (input_box.x + (input_box.w - text_rect.width) // 2, 
+                    input_box.y + (input_box.h - text_rect.height) // 2 + 3))
         #text above guessbox
-        guesstxt = smallFont.render("Guess word #" + str(n+1) + ":", True, (255,255,255))
-        pygame.draw.rect(screen, (0,0,0), (100, 750, 500, 40))
+        guesstxt = smallFont.render("Guess word #" + str(n+1) + ":", True, WHITE)
+        pygame.draw.rect(screen, BACKGROUND, (100, 750, 500, 40))
         screen.blit(guesstxt, (100,750))
-
         pygame.display.flip()
         clock.tick(30)
 

@@ -10,13 +10,13 @@ wordfile = open("wordle-answers-alphabetical.txt", "r")
 words = wordfile.read()
 words = words.split('\n')
 random_word = words[random.randint(0, len(words))]
-#print(random_word)
+print(random_word)
 
 #initialize game
 pygame.init()
-# Set up the drawing window
 screenWidth = 700
 screenHeight = 1000
+
 titleFont = pygame.font.Font(None, 100)
 guessFont = pygame.font.Font(None, 75)
 smallFont = pygame.font.Font(None, 32)
@@ -28,6 +28,7 @@ WHITE = (255,255,255)
 BACKGROUND = (18, 18, 19)
 COLOR_INACTIVE = DARK_GRAY
 COLOR_ACTIVE = LIGHT_GRAY
+
 BOX_SIZE = 75
 INPUT_WIDTH = 500
 
@@ -40,6 +41,7 @@ class letter_box:
                 row, 
                 letter=None, 
                 color=DARK_GRAY):
+
         self.screen = screen
         self.x = x
         self.y = y
@@ -49,8 +51,8 @@ class letter_box:
         self.rect = self.draw(color)
 
     def draw(self, color):
-        return pygame.draw.rect(self.screen, 
-                                color, 
+        return pygame.draw.rect(self.screen,
+                                color,
                                 (self.x, self.y, BOX_SIZE, BOX_SIZE))
 
     def write(self, letter):
@@ -60,7 +62,6 @@ class letter_box:
         self.screen.blit(lettertxt, 
                         (self.x + (BOX_SIZE - text_rect.width) // 2, 15 + self.y))
         
-
 
 #start game
 def main():
@@ -83,18 +84,14 @@ def main():
     for x in range(5):
         for y in range(6):
             boxes[y][x] = letter_box(screen, x_pos[x], y_pos[y], x, y)
-
     pygame.display.flip()
     running = True
     # Run until the user asks to quit
     while running:
-
         # Did the user click the window close button?
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # If the user clicked on the input_box rect.
                 if input_box.collidepoint(event.pos):
@@ -114,18 +111,20 @@ def main():
                         else:
                             #draw over error text
                             pygame.draw.rect(screen, BACKGROUND, (100, 900, 500, 40))
-
                             for i in range(len(user_guess)):
                                 guess = user_guess[i]
                                 box = boxes[n][i]
                                 if guess in random_word:
-                                    box.draw(YELLOW)
-                                if guess == random_word[i]:
-                                    box.draw(GREEN)
+                                    correctlettercount = 0
+                                    for k in range(i,5):
+                                        if guess == user_guess[k] and user_guess[k] == random_word[k]:
+                                            correctlettercount += 1
+                                            box.draw(GREEN)
+                                    if user_guess[0:i+1].count(guess) + correctlettercount <= random_word.count(user_guess[i]):
+                                        box.draw(YELLOW)
                                 box.write(guess)
                             n += 1
                         text = ''
-
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                     else:
@@ -143,13 +142,10 @@ def main():
         screen.blit(txt_surface, 
                     (input_box.x + (input_box.w - text_rect.width) // 2, 
                     input_box.y + (input_box.h - text_rect.height) // 2 + 3))
-        # Blit the input_box rect.
-        #pygame.draw.rect(screen, COLOR, input_box, 2)
         #text above guessbox
         guesstxt = smallFont.render("Guess word #" + str(n+1) + ":", True, WHITE)
         pygame.draw.rect(screen, BACKGROUND, (100, 750, 500, 40))
         screen.blit(guesstxt, (100,750))
-
         pygame.display.flip()
         clock.tick(30)
 

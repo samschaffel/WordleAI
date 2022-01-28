@@ -17,10 +17,14 @@ pygame.init()
 # Set up the drawing window
 screenWidth = 700
 screenHeight = 1000
+titleFont = pygame.font.Font(None, 100)
+guessFont = pygame.font.Font(None, 75)
+smallFont = pygame.font.Font(None, 32)
 COLOR_INACTIVE = pygame.Color('lightskyblue3')
 COLOR_ACTIVE = pygame.Color('dodgerblue2')
 YELLOW = (255, 255, 0)
 GREEN = (0,255,0)
+WHITE = (255,255,255)
 BOX_SIZE = 75
 
 class letter_box:
@@ -45,6 +49,10 @@ class letter_box:
                                 color, 
                                 (self.x, self.y, BOX_SIZE, BOX_SIZE))
 
+    def write(self, letter):
+        lettertxt = guessFont.render(letter, True, WHITE)
+        self.screen.blit(lettertxt, (20 + self.x, 15 + self.y))
+
 
 #start game
 def main():
@@ -52,9 +60,6 @@ def main():
     # Fill the background with black
     screen.fill((0, 0, 0))
     clock = pygame.time.Clock()
-    titleFont = pygame.font.Font(None, 100)
-    guessFont = pygame.font.Font(None, 75)
-    smallFont = pygame.font.Font(None, 32)
     input_box = pygame.Rect(100, 800, 600, 75)
     COLOR = COLOR_INACTIVE
     active = False
@@ -102,16 +107,16 @@ def main():
                             #draw over error text
                             pygame.draw.rect(screen, (0,0,0), (100, 900, 500, 40))
 
-
                             for i in range(len(user_guess)):
-                                if user_guess[i] in random_word:
-                                    print("ROW", n)
-                                    boxes[n][i].draw(YELLOW)
-                                    print(n, i, boxes[n][i].x, boxes[n][i].y)
-                                if user_guess[i] == random_word[i]:
-                                    boxes[n][i].draw(GREEN)
-                                lettertxt = guessFont.render(user_guess[i], True, (255,255,255))
-                                screen.blit(lettertxt,(20 + 100*(i+1), 15 + 100*(n+1)))
+                                guess = user_guess[i]
+                                box = boxes[n][i]
+                                if guess in random_word:
+                                    box.draw(YELLOW)
+                                    print(n, i, box.x, box.y)
+                                if guess == random_word[i]:
+                                    box.draw(GREEN)
+                                box.write(guess)
+
                         n = n + 1
                         text = ''
 

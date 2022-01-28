@@ -116,8 +116,7 @@ def main():
                                 if guess == random_word[i]:
                                     box.draw(GREEN)
                                 box.write(guess)
-
-                        n = n + 1
+                            n += 1
                         text = ''
 
                     elif event.key == pygame.K_BACKSPACE:

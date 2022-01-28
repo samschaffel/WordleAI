@@ -107,14 +107,14 @@ def main():
                                 if user_guess[i] in random_word:
                                     correctlettercount = 0
                                     for k in range(i,5):
-                                        if user_guess[i] == user_guess[k] and user_guess[k] == random_word[k]:
+
+                                        if guess == user_guess[k] and user_guess[k] == random_word[k]:
                                             correctlettercount += 1
                                             boxes[n][k].draw(GREEN)
-                                    if user_guess[0:i+1].count(user_guess[i]) + correctlettercount <= random_word.count(user_guess[i]):
-                                        print("ROW", n)
+                                    if user_guess[0:i+1].count(guess) + correctlettercount <= random_word.count(user_guess[i]):
                                         boxes[n][i].draw(YELLOW)
-                                        print(n, i, boxes[n][i].x, boxes[n][i].y)
-
+                                box.write(guess)
+                            n += 1
 
                                 lettertxt = guessFont.render(user_guess[i], True, (255,255,255))
                                 screen.blit(lettertxt,(20 + 100*(i+1), 15 + 100*(n+1)))

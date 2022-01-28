@@ -61,7 +61,7 @@ class letter_box:
         text_rect = lettertxt.get_rect()
         self.screen.blit(lettertxt, 
                         (self.x + (BOX_SIZE - text_rect.width) // 2, 15 + self.y))
-        
+
 
 #start game
 def main():

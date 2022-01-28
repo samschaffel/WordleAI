@@ -45,7 +45,8 @@ class InputBox:
                 else:
                     self.text += event.unicode
                 # Re-render the text.
-                self.txt_surface = Font.render(self.text, True, self.color)
+
+                self.txt_surface = FONT.render(self.text, True, self.color)
 
     def update(self):
         # Resize the box if the text is too long.
@@ -98,10 +99,13 @@ def main():
             input_box.handle_event(event)
 
         input_box.update()
-
+        pygame.draw.rect(screen, (128, 128, 128), (100, 800, 500, 75))
         input_box.draw(screen)
 
         pygame.display.flip()
+
+
+
         clock.tick(30)
 
 

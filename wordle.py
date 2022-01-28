@@ -113,23 +113,3 @@ def main():
 if __name__ == '__main__':
     main()
     pygame.quit()
-
-
-for n in range(6):
-    while(True):
-        message = "Guess word #" + str(n+1) + ":"
-        user_guess = input(message)
-        print("Your guess is: " + user_guess)
-        if user_guess not in words:
-            print("Please guess a valid 5-letter word")
-        else:
-            break
-    if user_guess == random_word:
-        print("correct")
-        break
-    else:
-        for i in range(len(user_guess)):
-            if user_guess[i] in random_word:
-                print("The correct word contains " + user_guess[i])
-            if user_guess[i] == random_word[i]:
-                print(user_guess[i] + " is in the correct position")

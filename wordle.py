@@ -6,9 +6,11 @@ import pygame
 import pygame.font
 
 #initialize random word
-wordfile = open("wordle-answers-alphabetical.txt", "r")
+wordfile = open("WordList.txt", "r")
 words = wordfile.read()
-words = words.split('\n')
+words = words.split(',')
+for n in range(len(words)):
+    words[n] = words[n].replace('"','')
 wordfile.close()
 random_word = words[random.randint(0, len(words))]
 print(random_word)
@@ -43,13 +45,13 @@ MSG_Y = 750
 ERROR_X = 100
 ERROR_Y = 900
 class letter_box:
-    def __init__(self, 
-                screen, 
-                x, 
-                y, 
-                col, 
-                row, 
-                letter=None, 
+    def __init__(self,
+                screen,
+                x,
+                y,
+                col,
+                row,
+                letter=None,
                 color=DARK_GRAY):
 
         self.screen = screen
@@ -69,7 +71,7 @@ class letter_box:
         self.letter = letter.upper()
         lettertxt = guessFont.render(self.letter, True, WHITE)
         text_rect = lettertxt.get_rect()
-        self.screen.blit(lettertxt, 
+        self.screen.blit(lettertxt,
                         (self.x + (BOX_SIZE - text_rect.width) // 2, 15 + self.y))
 
 
@@ -142,14 +144,14 @@ def main():
                     # Re-render the text.
 
         # Render the current text.
-        pygame.draw.rect(screen, 
-                        COLOR, 
+        pygame.draw.rect(screen,
+                        COLOR,
                         input_box)
         txt_surface = guessFont.render(text.upper(), True, WHITE)
         text_rect = txt_surface.get_rect()
         # Blit the text
-        screen.blit(txt_surface, 
-                    (input_box.x + (input_box.w - text_rect.width) // 2, 
+        screen.blit(txt_surface,
+                    (input_box.x + (input_box.w - text_rect.width) // 2,
                     input_box.y + (input_box.h - text_rect.height) // 2 + 3))
         #text above guessbox
         msg = smallFont.render("Guess word #" + str(n+1) + ":", True, WHITE)

@@ -6,14 +6,20 @@ import pygame
 import pygame.font
 
 #initialize random word
-wordfile = open("WordList.txt", "r")
+# wordfile = open("WordList.txt", "r")
+# words = wordfile.read()
+# words = words.split(',')
+# for n in range(len(words)):
+#     words[n] = words[n].replace('"','')
+# wordfile.close()
+
+wordfile = open("wordle-answers-alphabetical.txt", "r")
 words = wordfile.read()
-words = words.split(',')
-for n in range(len(words)):
-    words[n] = words[n].replace('"','')
-wordfile.close()
+words = words.split('\n')
 random_word = words[random.randint(0, len(words))]
 print(random_word)
+print(words[0:20])
+print(len(words))
 
 #initialize game
 pygame.init()
@@ -85,7 +91,11 @@ def main():
     active = False
     text = ''
     n = 0
+    winflag = 0
+    loseflag = 0
 
+    wintxt = smallFont.render("Congrats, you got it.", True, WHITE)
+    losetxt = smallFont.render("Wow, you suck.", True, WHITE)
     wordletxt = titleFont.render("Wordle", True, WHITE)
     wordError = smallFont.render("Please guess a valid 5-letter word", True, WHITE)
     screen.blit(wordletxt, (GAME_X, WORDLE_Y))
@@ -112,7 +122,7 @@ def main():
                     active = False
                 # Change the current COLOR of the input box.
                 COLOR = COLOR_ACTIVE if active else COLOR_INACTIVE
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN and winflag == 0 and loseflag == 0:
                 if active:
                     if event.key == pygame.K_RETURN:
                         user_guess = text.lower()
@@ -134,12 +144,19 @@ def main():
                                     if user_guess[0:i+1].count(guess) + correctlettercount <= random_word.count(user_guess[i]):
                                         box.draw(YELLOW)
                                 box.write(guess)
+                            if user_guess == random_word:
+                                screen.blit(wintxt, (ERROR_X, ERROR_Y))
+                                winflag = 1
+
                             n += 1
+                            if n > 5:
+                                screen.blit(losetxt, (ERROR_X, ERROR_Y))
+                                loseflag = 1
                         text = ''
+
                     elif event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
-                    else:
-                        if len(text) < 5:
+                    elif len(text) < 5:
                             text += event.unicode
                     # Re-render the text.
 

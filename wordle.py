@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import pygame
 import pygame.font
-import torch
 
 #initialize random word
 # wordfile = open("WordList.txt", "r")
@@ -160,16 +159,6 @@ def main():
     x_key_pos2 = np.linspace(GAME_X + KEY_SIZE // 2, GAME_X + KEY_SIZE // 2 + 6 * (KEY_SIZE + KEY_MARGIN), 7)
     y_key_pos = np.linspace(KEY_Y, KEY_Y + 2 * (KEY_SIZE + KEY_MARGIN), 3)
 
-    # keys = np.empty((26,1), dtype=object)
-    # for x in range(len(x_key_pos0)):
-    #     keys[x] = keyboard_letter(screen, x_key_pos0[x], y_key_pos[0], x, 0)
-    # for x in range(len(x_key_pos1)):
-    #     keys[x + len(x_key_pos0)] = keyboard_letter(screen, x_key_pos1[x], y_key_pos[1], x, 1)
-    # for x in range(len(x_key_pos2)):
-    #     keys[x + len(x_key_pos0) + len(x_key_pos1)] = keyboard_letter(screen, x_key_pos2[x], y_key_pos[2], x, 2)
-    #
-    # for x in range(26):
-    #     keys[x].draw(GREEN)
     keys = []
     for x in range(len(x_key_pos0)):
         keys.append(keyboard_letter(screen, x_key_pos0[x], y_key_pos[0], x, 0))
@@ -232,7 +221,7 @@ def main():
                             n += 1
                             if user_guess == random_word:
                                 screen.blit(wintxt, (ERROR_X, ERROR_Y))
-                                winflag = 1                            
+                                winflag = 1
                             elif n > 5:
                                 screen.blit(losetxt, (ERROR_X, ERROR_Y))
                                 loseflag = 1

@@ -17,7 +17,6 @@ wordfile = open("wordle-answers-alphabetical.txt", "r")
 words = wordfile.read()
 words = words.split('\n')
 random_word = words[random.randint(0, len(words))]
-random_word = "green"
 print(random_word)
 
 

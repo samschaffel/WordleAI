@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import pygame
 import pygame.font
+import torch
 
 #initialize random word
 # wordfile = open("WordList.txt", "r")
@@ -17,6 +18,7 @@ wordfile = open("wordle-answers-alphabetical.txt", "r")
 words = wordfile.read()
 words = words.split('\n')
 random_word = words[random.randint(0, len(words))]
+random_word = "green"
 print(random_word)
 
 
@@ -207,29 +209,31 @@ def main():
                             pygame.draw.rect(screen, BACKGROUND, (ERROR_X, ERROR_Y, GAME_WIDTH, 40))
                             for i in range(len(user_guess)):
                                 guess = user_guess[i]
+                                correct = random_word[i]
                                 box = boxes[n][i]
-                                if guess in random_word:
+                                if guess not in random_word:
+                                    box.draw(BLACK)
+                                    keys[qwerty.index(guess)].draw(BLACK)
+                                    keys[qwerty.index(guess)].write(guess)
+                                else:
                                     correctlettercount = 0
                                     for k in range(i,5):
                                         if guess == user_guess[k] and user_guess[k] == random_word[k]:
                                             correctlettercount += 1
-                                            boxes[n][k].draw(GREEN)
-                                            keys[qwerty.index(guess)].draw(GREEN)
-                                            keys[qwerty.index(guess)].write(guess)
                                     if user_guess[0:i+1].count(guess) + correctlettercount <= random_word.count(user_guess[i]):
                                         box.draw(YELLOW)
                                         keys[qwerty.index(guess)].draw(YELLOW)
                                         keys[qwerty.index(guess)].write(guess)
-                                else:
-                                    keys[qwerty.index(guess)].draw(BLACK)
+                                if guess == correct:
+                                    box.draw(GREEN)
+                                    keys[qwerty.index(guess)].draw(GREEN)
                                     keys[qwerty.index(guess)].write(guess)
                                 box.write(guess)
+                            n += 1
                             if user_guess == random_word:
                                 screen.blit(wintxt, (ERROR_X, ERROR_Y))
-                                winflag = 1
-
-                            n += 1
-                            if n > 5:
+                                winflag = 1                            
+                            elif n > 5:
                                 screen.blit(losetxt, (ERROR_X, ERROR_Y))
                                 loseflag = 1
                         text = ''

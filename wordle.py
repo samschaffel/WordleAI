@@ -212,6 +212,8 @@ def main():
                                         box.draw(YELLOW)
                                         keys[qwerty.index(guess)].draw(YELLOW)
                                         keys[qwerty.index(guess)].write(guess)
+                                    else:
+                                        box.draw(BLACK)
                                 if guess == correct:
                                     box.draw(GREEN)
                                     keys[qwerty.index(guess)].draw(GREEN)
